@@ -15,17 +15,14 @@ it `Dockerfile`'s for it to work.
 ## Components
  
 #### Monitoring and Observability
- * prometheus-operator
+ * prometheus
  * loki
  * tempo
  * grafana
- * healthcheks/healthchecks
+ * healthcheks/healthchecks [??]
 
 #### Networking
- * istio or linkerd [??]
-    * might be a bit overkill, why would i even need them?
-
-#### Ingress
+ * linkerd
  * ingress-nginx
  * cert-manager
  * external-dns

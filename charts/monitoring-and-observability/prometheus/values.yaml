@@ -1,0 +1,17 @@
+kube-prometheus-stack:
+    # Needed to monitor more than just monitoring chart
+    # https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#prometheusioscrape
+    prometheus:
+        prometheusSpec:
+            podMonitorSelectorNilUsesHelmValues: false
+            serviceMonitorSelectorNilUsesHelmValues: false
+            ruleSelectorNilUsesHelmValues: false
+
+    grafana:
+      enabled: false
+
+prometheus-adapter:
+    prometheus:
+        # FIXME: check if this can be changed to prometheus.monitoring.svc.cluster.local
+        url: prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local
+
