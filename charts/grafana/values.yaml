@@ -1,0 +1,43 @@
+grafana:
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/configuration-snippet: |
+        proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+        grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+    tls:
+      - secretName: grafana-tls
+        hosts:
+          - grafana.effective-waffle.dev.tjo.cloud
+    hosts:
+      # TODO: We should somehow be able to provide the DOMAIN
+      - grafana.effective-waffle.dev.tjo.cloud
+
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  # FIXME: This should be provided via secret
+  adminUser: admin
+  adminPassword: tojezelovarno
+
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://prometheus-prometheus.monitoring:9090
+        access: proxy
+        isDefault: true
+        editable: false
+      - name: Loki
+        type: loki
+        url: http://loki.monitoring:3100
+        editable: false
+

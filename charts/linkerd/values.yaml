@@ -1,0 +1,13 @@
+global:
+  grafanaUrl: grafana.effective-waffle.dev.tjo.cloud
+
+linkerd2:
+  installNamespace: false
+
+  grafana:
+    enabled: false
+
+  # Cluster prometheus will scrape this one
+  prometheus:
+    enabled: true
+

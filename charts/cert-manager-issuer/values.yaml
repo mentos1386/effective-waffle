@@ -1,0 +1,6 @@
+digitalocean: {}
+  # apiToken: ""
+
+letsencrypt:
+  email: tine@tjo.space
+

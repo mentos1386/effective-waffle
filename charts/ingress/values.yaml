@@ -1,0 +1,31 @@
+ingress-nginx:
+  controller:
+    annotations:
+      linkerd.io/inject: ingress
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+
+external-dns:
+  provider: digitalocean
+  metrics:
+    enabled: true
+  digitalocean: {}
+    # apiToken: super-secret-token
+
+cert-manager:
+  installCRDs: true
+
+  # Prometheus support
+  prometheus:
+    servicemonitor:
+      enabled: true
+
+  # Support for kubernetes.io/tls-acme: "true" annotation
+  # https://cert-manager.io/docs/usage/ingress/#optional-configuration
+  ingressShim:
+    defaultIssuerName: letsencrypt
+    defaultIssuerKind: ClusterIssuer
+    defaultIssuerGroup: cert-manager.io
+

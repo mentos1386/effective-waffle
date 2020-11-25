@@ -1,0 +1,12 @@
+dependencies:
+- name: ingress-nginx
+  repository: https://kubernetes.github.io/ingress-nginx
+  version: 3.12.0
+- name: external-dns
+  repository: https://charts.bitnami.com/bitnami
+  version: 4.0.0
+- name: cert-manager
+  repository: https://charts.jetstack.io
+  version: v1.1.0
+digest: sha256:c4676ee523c5ebf5f31196e1a61531f86902c0815317f2bc9d91ba340674311a
+generated: "2020-11-25T10:49:45.033710678+01:00"

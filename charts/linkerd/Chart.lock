@@ -1,0 +1,6 @@
+dependencies:
+- name: linkerd2
+  repository: https://helm.linkerd.io/stable
+  version: 2.9.0
+digest: sha256:d9b711d29ba01e7152f5a22764d392771f38eb8f5c30faf0f2b2498fcdedf994
+generated: "2020-11-25T11:17:42.854329824+01:00"

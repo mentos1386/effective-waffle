@@ -1,0 +1,54 @@
+apiVersion: skaffold/v2beta9
+kind: Config
+metadata:
+  name: mentos1386/effective-waffle
+
+deploy:
+  helm:
+    releases:
+    - name: namespaces
+      namespace: kube-system
+      chartPath: charts/namespaces
+      wait: true
+    - name: linkerd
+      namespace: linkerd
+      chartPath: charts/linkerd
+      skipBuildDependencies: true
+      wait: true
+      setFiles:
+        # TODO: Should be read from a secret created by terraform
+        global.identityTrustAnchorsPEM: tmp/ca.crt
+        linkerd2.identity.issuer.tls.crtPEM: tmp/issuer.crt
+        linkerd2.identity.issuer.tls.keyPEM: tmp/issuer.key
+      setValues:
+        # TODO: Should be read from a secret created by terraform
+        linkerd2.identity.issuer.crtExpiry: "2021-11-25T21:02:15Z"
+    - name: prometheus
+      namespace: monitoring
+      chartPath: charts/prometheus
+      skipBuildDependencies: true
+      wait: true
+    - name: loki
+      namespace: monitoring
+      chartPath: charts/loki
+      skipBuildDependencies: true
+      wait: true
+    - name: ingress
+      namespace: ingress
+      chartPath: charts/ingress
+      skipBuildDependencies: true
+      setValueTemplates:
+        external-dns.digitalocean.apiToken: "{{ .DIGITALOCEAN_TOKEN  }}"
+      wait: true
+    - name: cert-manager-issuer
+      namespace: ingress
+      chartPath: charts/cert-manager-issuer
+      skipBuildDependencies: true
+      setValueTemplates:
+        digitalocean.apiToken: "{{ .DIGITALOCEAN_TOKEN }}"
+      wait: true
+    - name: grafana
+      namespace: grafana
+      chartPath: charts/grafana
+      skipBuildDependencies: true
+
