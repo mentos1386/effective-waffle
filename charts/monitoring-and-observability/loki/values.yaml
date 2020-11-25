@@ -1,0 +1,11 @@
+loki:
+  tracing:
+    jaegerAgentHost: ""
+  
+  persistence:
+    enabled: true
+
+promtail:
+  loki:
+    serviceName: loki
+

@@ -1,0 +1,14 @@
+apiVersion: v2
+description: Loki
+name: loki
+appVersion: 1.0
+version: 1.0
+
+dependencies:
+  - name: loki
+    version: ^2.1.0
+    repository: https://grafana.github.io/loki/charts
+  - name: promtail
+    version: ^2.0.1
+    repository: https://grafana.github.io/loki/charts 
+
