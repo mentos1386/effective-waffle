@@ -15,21 +15,23 @@ it `Dockerfile`'s for it to work.
 ## Components
  
 #### Monitoring and Observability
- * prometheus
- * loki
- * tempo
- * grafana
+ * [x] prometheus
+ * [x] loki
+ * tempo [??]
+ * [x] grafana
  * healthcheks/healthchecks [??]
 
 #### Networking
- * linkerd
- * ingress-nginx
- * cert-manager
- * external-dns
+ * [x] linkerd
+ * [x] ingress-nginx
+ * [x] cert-manager
+ * [x] external-dns
+ * oauth2-proxy
+ * openfass
 
 #### Infrastructure
- * Terraform
-  * DigitalOcean
+ * [x] Terraform
+  * [x] DigitalOcean
 
 #### Pipeline
  * Github Actions
