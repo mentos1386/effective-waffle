@@ -1,0 +1,22 @@
+openfass:
+  operator:
+    create: true
+
+  functionNamespace: openfass-fn
+  basic_auth: true
+
+  ingress:
+    enabled: true
+
+  # Linkerd support
+  gateway:
+    directFunctions: true
+
+  # Scale down to zero
+  fassIdler:
+    dryRun: true
+
+  nats:
+    # TODO: Add outside nats server
+    external: {}
+

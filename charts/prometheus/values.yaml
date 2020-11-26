@@ -13,6 +13,14 @@ kube-prometheus-stack:
     grafana:
       enabled: false
 
+    # Admission pod never finished if linkerd is injected
+    # TODO: investigate why
+    prometheusOperator:
+      admissionWebhooks:
+        patch:
+          podAnnotations:
+            linkerd.io/inject: disabled
+
 prometheus-adapter:
     prometheus:
         url: prometheus-prometheus

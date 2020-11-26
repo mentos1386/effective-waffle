@@ -6,6 +6,10 @@ ingress-nginx:
       enabled: true
       serviceMonitor:
         enabled: true
+    admissionWebhooks:
+      patch:
+        podAnnotations:
+          linkerd.io/inject: disabled
 
 external-dns:
   provider: digitalocean
