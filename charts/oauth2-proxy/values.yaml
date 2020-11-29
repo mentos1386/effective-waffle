@@ -1,0 +1,109 @@
+domain: effective-waffle.dev.tjo.cloud
+
+# Oauth client configuration specifics
+config:
+  # OAuth client ID
+  clientID: "XXXXXXX"
+  # OAuth client secret
+  clientSecret: "XXXXXXXX"
+  # Cookie secret
+  cookieSecret: "XXXXXXX"
+  # Default configuration, to be overridden
+  configFile: |-
+    upstreams = [ "file:///dev/null" ]
+
+extraArgs:
+  whitelist-domain: k8s.effective-waffle.dev.tjo.cloud
+  cookie-domain: k8s.effective-waffle.dev.tjo.cloud
+  redirect-url: https://auth.k8s.effective-waffle.dev.tjo.cloud/oauth2/callback
+  skip-provider-button: true
+  prefer-email-to-user: true
+  set-xauthrequest: true
+  email-domain: "*"
+  provider: github
+  github-repo: mentos1386/effective-waffle
+
+image:
+  repository: "quay.io/oauth2-proxy/oauth2-proxy"
+  tag: "v6.1.1"
+  pullPolicy: "IfNotPresent"
+
+# Optionally specify an array of imagePullSecrets.
+# Secrets must be manually created in the namespace.
+# ref: https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+# imagePullSecrets:
+  # - name: myRegistryKeySecretName
+
+extraEnv: []
+
+service:
+  type: ClusterIP
+  port: 80
+  annotations: {}
+
+## Create or use ServiceAccount
+serviceAccount:
+  ## Specifies whether a ServiceAccount should be created
+  enabled: true
+  ## The name of the ServiceAccount to use.
+  ## If not set and create is true, a name is generated using the fullname template
+  name:
+  annotations: {}
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 300Mi
+  requests:
+    cpu: 100m
+    memory: 300Mi
+
+priorityClassName: ""
+
+# Affinity for pod assignment
+# Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+# affinity: {}
+
+# Tolerations for pod assignment
+# Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+tolerations: []
+
+# Node labels for pod assignment
+# Ref: https://kubernetes.io/docs/user-guide/node-selection/
+nodeSelector: {}
+
+# Configure Kubernetes liveness and readiness probes.
+# Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+# Disable both when deploying with Istio 1.0 mTLS. https://istio.io/help/faq/security/#k8s-health-checks
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 0
+  timeoutSeconds: 1
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 0
+  timeoutSeconds: 1
+  periodSeconds: 10
+  successThreshold: 1
+
+# Configure Kubernetes security context for container
+# Ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+securityContext:
+  enabled: false
+  runAsNonRoot: true
+
+podAnnotations: {}
+podLabels: {}
+replicaCount: 1
+
+## PodDisruptionBudget settings
+## ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+# Configure Kubernetes security context for pod
+# Ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+podSecurityContext: {}
+

@@ -47,6 +47,14 @@ deploy:
       setValueTemplates:
         digitalocean.apiToken: "{{ .DIGITALOCEAN_TOKEN }}"
       wait: true
+    - name: oauth2-proxy
+      namespace: ingress
+      chartPath: charts/oauth2-proxy
+      skipBuildDependencies: true
+      setValueTemplates:
+        config.clientID: "{{ .OAUTH_CLIENT_ID }}"
+        config.clientSecret: "{{ .OAUTH_CLIENT_SECRET }}"
+        config.cookieSecret: "{{ .OAUTH_COOKIE_SECRET }}"
     - name: grafana
       namespace: grafana
       chartPath: charts/grafana

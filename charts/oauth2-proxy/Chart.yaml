@@ -1,0 +1,6 @@
+apiVersion: v2
+description: A reverse proxy that provides authentication Github or other providers
+name: oauth2-proxy
+appVersion: 6.1.1
+version: 1.0.0
+

@@ -1,19 +1,6 @@
 grafana:
   ingress:
-    enabled: true
-    annotations:
-      kubernetes.io/tls-acme: "true"
-      nginx.ingress.kubernetes.io/configuration-snippet: |
-        proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-        grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-    tls:
-      - secretName: grafana-tls
-        hosts:
-          - grafana.effective-waffle.dev.tjo.cloud
-    hosts:
-      # TODO: We should somehow be able to provide the DOMAIN
-      - grafana.effective-waffle.dev.tjo.cloud
-
+    enabled: false
   resources:
     limits:
       cpu: 100m
@@ -26,6 +13,39 @@ grafana:
   adminUser: admin
   adminPassword: tojezelovarno
 
+  grafana.ini:
+    users:
+      allow_sign_up: false
+      auto_assign_org: true
+      auto_assign_org_role: Editor
+    auth.proxy:
+      enabled: true
+      header_name: X-Auth-Request-Email
+      header_property: email
+      auto_sign_up: true
+
+  serviceMonitor:
+    enabled: true
+
+  imageRenderer:
+    enabled: true
+
+  # TODO: It should have working smtp?? Do we need it for alerts?
+  smtp: {}
+
+  sidecar:
+    dashboards:
+      enabled: true
+      searchNamespace: ALL
+    datasources:
+      enabled: true
+      searchNamespaces: ALL
+    notifiers:
+      enabled: true
+      searchNamespaces: ALL
+
+  # TODO: Move to respective charts
+  # it will be autodiscovered by grafana
   datasources:
     datasources.yaml:
       apiVersion: 1

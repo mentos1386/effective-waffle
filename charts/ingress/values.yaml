@@ -1,5 +1,7 @@
 ingress-nginx:
   controller:
+    config:
+      proxy-buffer-size: "8k"
     annotations:
       linkerd.io/inject: ingress
     metrics:
@@ -10,6 +12,20 @@ ingress-nginx:
       patch:
         podAnnotations:
           linkerd.io/inject: disabled
+    resources:
+      #limits:
+      #  cpu: 200m
+      #  memory: 90Mi
+      requests:
+        cpu: 200m
+        memory: 90Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+    updateStrategy:
+      rollingUpdate:
+        maxUnavailable: 1
+      type: RollingUpdate
 
 external-dns:
   provider: digitalocean
@@ -17,19 +33,31 @@ external-dns:
     enabled: true
   digitalocean: {}
     # apiToken: super-secret-token
+  resources:
+    limits:
+      cpu: 50m
+      memory: 50Mi
+    requests:
+      cpu: 10m
+      memory: 50Mi
 
 cert-manager:
   installCRDs: true
-
   # Prometheus support
   prometheus:
     servicemonitor:
       enabled: true
-
   # Support for kubernetes.io/tls-acme: "true" annotation
   # https://cert-manager.io/docs/usage/ingress/#optional-configuration
   ingressShim:
     defaultIssuerName: letsencrypt
     defaultIssuerKind: ClusterIssuer
     defaultIssuerGroup: cert-manager.io
+  resources:
+    requests:
+      cpu: 100m
+      memory: 100Mi
+    limits:
+      cpu: 100m
+      memory: 100Mi
 

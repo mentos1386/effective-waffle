@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ template "oauth2-proxy.name" . }}
+    chart: {{ template "oauth2-proxy.chart" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  name: {{ template "oauth2-proxy.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "oauth2-proxy.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+    {{- if .Values.podAnnotations }}
+{{ toYaml .Values.podAnnotations | indent 8 }}
+    {{- end }}
+      labels:
+        app: {{ template "oauth2-proxy.name" . }}
+        release: "{{ .Release.Name }}"
+      {{- if .Values.podLabels }}
+{{ toYaml .Values.podLabels | indent 8 }}
+      {{- end }}
+    spec:
+    {{- if .Values.priorityClassName }}
+      priorityClassName: "{{ .Values.priorityClassName }}"
+    {{- end }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ template "oauth2-proxy.serviceAccountName" . }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args:
+          - --http-address=0.0.0.0:4180
+        {{- range $key, $value := .Values.extraArgs }}
+          {{- if $value }}
+          - --{{ $key }}={{ $value }}
+          {{- else }}
+          - --{{ $key }}
+          {{- end }}
+        {{- end }}
+        env:
+        - name: OAUTH2_PROXY_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name:  {{ template "oauth2-proxy.secretName" . }}
+              key: client-id
+        - name: OAUTH2_PROXY_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name:  {{ template "oauth2-proxy.secretName" . }}
+              key: client-secret
+        - name: OAUTH2_PROXY_COOKIE_SECRET
+          valueFrom:
+            secretKeyRef:
+              name:  {{ template "oauth2-proxy.secretName" . }}
+              key: cookie-secret
+        {{- if .Values.extraEnv }}
+          {{ toYaml .Values.extraEnv | nindent 8 }}
+        {{- end }}
+        ports:
+          - containerPort: 4180
+            name: http
+            protocol: TCP
+{{- if .Values.livenessProbe.enabled }}
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: http
+          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+          timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+{{- end }}
+{{- if .Values.readinessProbe.enabled }}
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: http
+          initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+          timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.readinessProbe.successThreshold }}
+          periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+{{- end }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        volumeMounts:
+{{- if or .Values.config.existingConfig .Values.config.configFile }}
+        - mountPath: /etc/oauth2_proxy
+          name: configmain
+{{- end }}
+{{- if .Values.securityContext.enabled }}
+        securityContext:
+          runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
+{{- end}}
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: {{ template "oauth2-proxy.fullname" . }}
+        name: configmain
+
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.imagePullSecrets | indent 8 }}
+      {{- end }}
+    {{- if .Values.affinity }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}
+    {{- end }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+    {{- end }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}

@@ -1,5 +1,5 @@
 global:
-  grafanaUrl: grafana.effective-waffle.dev.tjo.cloud
+  grafanaUrl: grafana.internal.effective-waffle.dev.tjo.cloud
 
 linkerd2:
   installNamespace: false

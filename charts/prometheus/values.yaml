@@ -5,10 +5,18 @@ kube-prometheus-stack:
     # Needed to monitor more than just monitoring chart
     # https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#prometheusioscrape
     prometheus:
-        prometheusSpec:
-            podMonitorSelectorNilUsesHelmValues: false
-            serviceMonitorSelectorNilUsesHelmValues: false
-            ruleSelectorNilUsesHelmValues: false
+      resources:
+        limits:
+          cpu: 200m
+          memory: 400Mi
+        requests:
+          cpu: 200m
+          memory: 400Mi
+ 
+      prometheusSpec:
+        podMonitorSelectorNilUsesHelmValues: false
+        serviceMonitorSelectorNilUsesHelmValues: false
+        ruleSelectorNilUsesHelmValues: false
 
     grafana:
       enabled: false
@@ -16,6 +24,13 @@ kube-prometheus-stack:
     # Admission pod never finished if linkerd is injected
     # TODO: investigate why
     prometheusOperator:
+      resources:
+        limits:
+          cpu: 200m
+          memory: 200Mi
+        requests:
+          cpu: 200m
+          memory: 200Mi
       admissionWebhooks:
         patch:
           podAnnotations:
